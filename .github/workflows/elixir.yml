@@ -19,14 +19,14 @@ jobs:
           - elixir: "1.20.2-otp-29"
             otp_release: "29.0.3"
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Set up Elixir
       uses: erlef/setup-beam@v1
       with:
         elixir-version: ${{ matrix.elixir }}
         otp-version: ${{ matrix.otp_release }}
     - name: Restore dependencies cache
-      uses: actions/cache@v3
+      uses: actions/cache@v6
       with:
         path: deps
         key: ${{ runner.os }}-${{ matrix.elixir }}-${{ matrix.otp_release }}-mix-${{ hashFiles('**/mix.lock') }}
@@ -42,14 +42,14 @@ jobs:
     name: Check formatting
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Set up Elixir
       uses: erlef/setup-beam@v1
       with:
         elixir-version: '1.20.2-otp-29'
         otp-version: '29.0.3'
     - name: Restore dependencies cache
-      uses: actions/cache@v3
+      uses: actions/cache@v6
       with:
         path: deps
         key: ${{ runner.os }}-${{ matrix.elixir }}-${{ matrix.otp_release }}-mix-${{ hashFiles('**/mix.lock') }}

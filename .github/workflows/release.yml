@@ -5,6 +5,9 @@ on:
     tags:
       - "v*"
 
+permissions:
+  contents: write
+
 jobs:
   build-escript:
     name: Build escripts
@@ -15,7 +18,7 @@ jobs:
           - elixir: "1.20.2-otp-29"
             otp_release: "29.0.3"
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Set up Elixir
       uses: erlef/setup-beam@v1
       with:
@@ -29,7 +32,7 @@ jobs:
       run: mix escript.build
     - name: Rename escript
       run: "mv smppsend smppsend-escript-${{ matrix.otp_release }}"
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       with:
         name: otp-${{ matrix.otp_release }}
         path: smppsend-escript-${{ matrix.otp_release }}
@@ -40,14 +43,14 @@ jobs:
     env:
       MIX_ENV: prod
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
           elixir-version: "1.20.2-otp-29"
           otp-version: "29.0.3"
 
-      - uses: goto-bus-stop/setup-zig@v2
+      - uses: goto-bus-stop/setup-zig@v2.2.1
         with:
           version: 0.15.2
       - name: Build Burrito
@@ -55,7 +58,7 @@ jobs:
           mix deps.get
           mix compile
           mix release smppsend --overwrite
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: burrito-images
           path: burrito_out/*
@@ -68,12 +71,16 @@ jobs:
       - build-burrito
     steps:
     - name: Download artifacts
-      uses: actions/download-artifact@v4
-    - uses: "marvinpinto/action-automatic-releases@latest"
-      with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        prerelease: false
-        title: Precompiled `smppsend` for the latest OTP versions
-        files: |
-          otp-*/smppsend-*
-          burrito-images/*
+      uses: actions/download-artifact@v8
+    - name: Create GitHub release
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+          gh release upload "$GITHUB_REF_NAME" otp-*/smppsend-* burrito-images/* --clobber
+        else
+          gh release create "$GITHUB_REF_NAME" otp-*/smppsend-* burrito-images/* \
+            --title "Precompiled smppsend for the latest OTP versions" \
+            --notes "Release $GITHUB_REF_NAME" \
+            --verify-tag
+        fi
