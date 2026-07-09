@@ -102,11 +102,9 @@ defmodule SMPPSend do
     System.halt(code)
   end
 
-  @main_in_app_start Application.compile_env(:smppsend, :main_in_app_start, false)
-
   ## For Burrito
   def start(_, _) do
-    case @main_in_app_start do
+    case Application.get_env(:smppsend, :main_in_app_start, false) do
       true ->
         Burrito.Util.Args.get_arguments()
         |> main()

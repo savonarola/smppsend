@@ -16,11 +16,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - elixir: "1.14"
-            otp_release: 24
-
-          - elixir: "1.14"
-            otp_release: 25
+          - elixir: "1.20.2-otp-29"
+            otp_release: "29.0.3"
     steps:
     - uses: actions/checkout@v3
     - name: Set up Elixir
@@ -49,8 +46,8 @@ jobs:
     - name: Set up Elixir
       uses: erlef/setup-beam@v1
       with:
-        elixir-version: '1.14'
-        otp-version: '25'
+        elixir-version: '1.20.2-otp-29'
+        otp-version: '29.0.3'
     - name: Restore dependencies cache
       uses: actions/cache@v3
       with:
