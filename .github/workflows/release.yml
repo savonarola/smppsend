@@ -15,7 +15,7 @@ jobs:
           - elixir: "1.20.2-otp-29"
             otp_release: "29.0.3"
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up Elixir
       uses: erlef/setup-beam@v1
       with:
@@ -29,7 +29,7 @@ jobs:
       run: mix escript.build
     - name: Rename escript
       run: "mv smppsend smppsend-escript-${{ matrix.otp_release }}"
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: otp-${{ matrix.otp_release }}
         path: smppsend-escript-${{ matrix.otp_release }}
@@ -40,7 +40,7 @@ jobs:
     env:
       MIX_ENV: prod
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
@@ -55,7 +55,7 @@ jobs:
           mix deps.get
           mix compile
           mix release smppsend --overwrite
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: burrito-images
           path: burrito_out/*
@@ -68,7 +68,7 @@ jobs:
       - build-burrito
     steps:
     - name: Download artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
