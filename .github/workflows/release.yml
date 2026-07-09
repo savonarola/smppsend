@@ -70,6 +70,7 @@ jobs:
       - build-escript
       - build-burrito
     steps:
+    - uses: actions/checkout@v7
     - name: Download artifacts
       uses: actions/download-artifact@v8
     - name: Create GitHub release
